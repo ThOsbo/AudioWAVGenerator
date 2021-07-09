@@ -21,7 +21,7 @@ bitsPerSample = 0
 
 subChunk2ID = ""
 subChunk2Size = 0
-data = None
+data = []
 
 def ReadFile(fileName) :
     audioFile = open(fileName, "rb")
@@ -41,11 +41,11 @@ def ReadFile(fileName) :
     __ParseDataSubChunk()
 
     print("Chunk ID : " + chunkID)
-    print("Chunk Size : " + str(chunkSize))
+    print("Chunk Size : " + str(chunkSize) + " bytes")
     print("Chunk Format : " + chunkFormat)
     print()
     print("Sub Chunk 1 ID : " + subChunk1ID)
-    print("Sub Chunk 1 Size : " + str(subChunk1Size))
+    print("Sub Chunk 1 Size : " + str(subChunk1Size) + " bytes")
     print("Audio Format : " + str(audioFormat))
     print("Number of Channels : " + str(numChannels))
     print("Sample Rate : " + str(sampleRate))
@@ -54,7 +54,7 @@ def ReadFile(fileName) :
     print("Bits per Sample : " + str(bitsPerSample))
     print()
     print("Sub Chunk 2 ID : " + subChunk2ID)
-    print("Sub Chunk 2 Size : " + str(subChunk2Size))
+    print("Sub Chunk 2 Size : " + str(subChunk2Size) + " bytes")
 
 def __ParseRIFFChunk() :
     _chunkID = ""
@@ -156,10 +156,15 @@ def __ParseFMTSubChunk() :
 def __ParseDataSubChunk() :
     _subChunk2ID = ""
     _subChunk2Size = None
-    _data = None
+    _data = []
+    dataSample = None
 
     const_subChunk2IDEndPoint = 4
     const_subChunk2SizeEndPoint = 8
+    const_bitsPerByte = 8
+
+    global bitsPerSample
+    const_bytesPerSample = bitsPerSample / const_bitsPerByte
 
     pos = 0
     for byte in dataSubChunkBytes :
@@ -171,10 +176,13 @@ def __ParseDataSubChunk() :
             else :
                 _subChunk2Size = _subChunk2Size + byte
         else :
-            if _data == None :
-                _data = byte
-            else :
-                _data = _data + byte
+            if dataSample == None :
+                dataSample = byte
+            else : 
+                dataSample = dataSample + byte
+            if (len(dataSample) == const_bytesPerSample) :
+                _data.append(__ParseSample(dataSample))
+                dataSample = None
             
         pos = pos + 1
 
@@ -182,5 +190,14 @@ def __ParseDataSubChunk() :
     subChunk2ID = _subChunk2ID
     subChunk2Size = struct.unpack_from("<I", _subChunk2Size)[0]
     data = _data
+
+def __ParseSample(sample) :
+    result = None
+    sampleSize = len(sample)
+    if sampleSize == 1 :
+        result = ord(sample)
+    elif sampleSize == 2 :
+        result = struct.unpack_from("<h", sample)[0]
+    return result
         
     
