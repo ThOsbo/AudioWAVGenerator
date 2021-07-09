@@ -19,6 +19,10 @@ byteRate = 0
 blockAlign = 0
 bitsPerSample = 0
 
+subChunk2ID = ""
+subChunk2Size = 0
+data = None
+
 def ReadFile(fileName) :
     audioFile = open(fileName, "rb")
     byte = audioFile.read(1)
@@ -34,6 +38,7 @@ def ReadFile(fileName) :
         byte = audioFile.read(1)
     __ParseRIFFChunk()
     __ParseFMTSubChunk()
+    __ParseDataSubChunk()
 
     print("Chunk ID : " + chunkID)
     print("Chunk Size : " + str(chunkSize))
@@ -48,6 +53,8 @@ def ReadFile(fileName) :
     print("Block Align : " + str(blockAlign))
     print("Bits per Sample : " + str(bitsPerSample))
     print()
+    print("Sub Chunk 2 ID : " + subChunk2ID)
+    print("Sub Chunk 2 Size : " + str(subChunk2Size))
 
 def __ParseRIFFChunk() :
     _chunkID = ""
@@ -145,4 +152,35 @@ def __ParseFMTSubChunk() :
     byteRate = struct.unpack_from("<I", _byteRate)[0]
     blockAlign = struct.unpack_from("<H", _blockAlign)[0]
     bitsPerSample = struct.unpack_from("<H", _bitsPerSample)[0]
+
+def __ParseDataSubChunk() :
+    _subChunk2ID = ""
+    _subChunk2Size = None
+    _data = None
+
+    const_subChunk2IDEndPoint = 4
+    const_subChunk2SizeEndPoint = 8
+
+    pos = 0
+    for byte in dataSubChunkBytes :
+        if pos < const_subChunk2IDEndPoint :
+            _subChunk2ID = _subChunk2ID + byte.decode("utf-8")
+        elif pos < const_subChunk2SizeEndPoint :
+            if _subChunk2Size == None :
+                _subChunk2Size = byte
+            else :
+                _subChunk2Size = _subChunk2Size + byte
+        else :
+            if _data == None :
+                _data = byte
+            else :
+                _data = _data + byte
+            
+        pos = pos + 1
+
+    global subChunk2ID, subChunk2Size, data
+    subChunk2ID = _subChunk2ID
+    subChunk2Size = struct.unpack_from("<I", _subChunk2Size)[0]
+    data = _data
+        
     
