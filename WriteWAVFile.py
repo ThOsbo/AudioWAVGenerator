@@ -61,7 +61,10 @@ def WriteFmtChunk() :
     bytesToWrite.append(struct.pack("<H", bitsPerSample))
 
 def WriteDataChunk() :
-    pass
+    global subChunk2ID, subChunk2Size, bytesToWrite
+
+    bytesToWrite.append(subChunk2ID.encode("utf-8"))
+    bytesToWrite.append(struct.pack("<I", subChunk2Size))
 
 def GenerateSquareWave(duration) :
     global data, byteRate, bitsPerSample
