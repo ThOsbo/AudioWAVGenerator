@@ -1,6 +1,5 @@
 from os import read
 import struct
-import sys
 
 RIFFChunkBytes = []
 fmtSubChunkBytes = []
@@ -12,7 +11,7 @@ chunkFormat = ""
 
 subChunk1ID = ""
 subChunk1Size = 0
-audioFormat = ""
+audioFormat = 1
 numChannels = 0
 sampleRate = 0
 byteRate = 0
