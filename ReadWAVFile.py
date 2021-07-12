@@ -1,4 +1,3 @@
-from os import read
 import struct
 
 RIFFChunkBytes = []
@@ -26,6 +25,9 @@ def ReadFile(fileName) :
     audioFile = open(fileName, "rb")
     byte = audioFile.read(1)
     pos = 0
+    RIFFChunkBytes.clear()
+    fmtSubChunkBytes.clear()
+    dataSubChunkBytes.clear()
     while byte :
         if pos < 12 :
             RIFFChunkBytes.append(byte)
