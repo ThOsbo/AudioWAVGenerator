@@ -49,7 +49,16 @@ def WriteRIFFChunk() :
     bytesToWrite.append(chunkFormat.encode("utf-8"))
 
 def WriteFmtChunk() :
-    pass
+    global subChunk1ID, subChunk1Size, audioFormat, numChannels, sampleRate, bitsPerSample, byteRate, blockAlign, bytesToWrite
+
+    bytesToWrite.append(subChunk1ID.encode("utf-8"))
+    bytesToWrite.append(struct.pack("<I", subChunk1Size))
+    bytesToWrite.append(struct.pack("<H", audioFormat))
+    bytesToWrite.append(struct.pack("<H", numChannels))
+    bytesToWrite.append(struct.pack("<I", sampleRate))
+    bytesToWrite.append(struct.pack("<I", byteRate))
+    bytesToWrite.append(struct.pack("<H", blockAlign))
+    bytesToWrite.append(struct.pack("<H", bitsPerSample))
 
 def WriteDataChunk() :
     pass
