@@ -1,8 +1,9 @@
 from os import write
 import struct
+import sys
 
 chunkID = "RIFF"
-chunkSize = 0
+chunkSize = 36
 chunkFormat = "WAVE"
 
 subChunk1ID = "fmt"
@@ -18,8 +19,34 @@ subChunk2ID = "data"
 subChunk2Size = 0
 data = []
 
+bytesToWrite = []
+
+def WriteWAVFile() :
+    filePath = "TestAudio\TestFile.wav"
+
+    GenerateSquareWave(2)
+    SetChunkSizes()
+
+    WriteRIFFChunk()
+    WriteFmtChunk()
+    WriteDataChunk()
+
+    file = open(filePath, "wb")
+
+    global bytesToWrite
+
+    for byte in bytesToWrite :
+        sys.stdout.buffer.write(byte)
+        file.write(byte)
+    
+    file.close()
+
 def WriteRIFFChunk() :
-    pass
+    global chunkID, chunkSize, chunkFormat, bytesToWrite
+
+    bytesToWrite.append(chunkID.encode("utf-8"))
+    bytesToWrite.append(struct.pack("<I", chunkSize))
+    bytesToWrite.append(chunkFormat.encode("utf-8"))
 
 def WriteFmtChunk() :
     pass
@@ -33,8 +60,8 @@ def GenerateSquareWave(duration) :
     frequency = 1
     offset = 0
 
-    numBytes = duration * byteRate
-    swapSign = byteRate / frequency
+    numBytes = int(duration * byteRate)
+    swapSign = int(byteRate / frequency)
     sign = 1
 
     for i in range(numBytes) :
@@ -46,3 +73,10 @@ def GenerateSquareWave(duration) :
         elif bitsPerSample == 16 :
             byte = struct.pack("<h", val)
         data.append(byte)
+
+def SetChunkSizes() :
+    global data, subChunk2Size, subChunk1Size, chunkSize
+
+    subChunk2Size = len(data)
+    subChunk1Size = 16
+    chunkSize = 4 + 8 + subChunk1Size + 8 + subChunk2Size
