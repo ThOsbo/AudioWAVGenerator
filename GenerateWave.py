@@ -1,8 +1,4 @@
-def GenerateSquareWave(duration, sampleRate, frequency = 44100, amplitude = 32767) :
-    amplitude = 32767
-    frequency = 44100
-    offset = 0
-
+def GenerateSquareWave(duration, sampleRate, frequency = 44100, amplitude = 32767, offset = 0) :
     numSamples = int(duration * sampleRate)
     swapSign = int(sampleRate / frequency)
     sign = 1
