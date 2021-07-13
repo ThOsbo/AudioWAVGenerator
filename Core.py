@@ -1,8 +1,11 @@
-import ReadWAVFile
-import WriteWAVFile
+import ByteFiles
 
 if __name__ == "__main__" :
-    ReadWAVFile.ReadFile("TestAudio\sound.wav")
-    WriteWAVFile.WriteWAVFile()
+    testFileRead = ByteFiles.wavFile("TestAudio\sound.wav")
+    testFileRead.PrintFile()
     print("\n")
-    ReadWAVFile.ReadFile("TestAudio\TestFile.wav")
+
+    testFileWrite = ByteFiles.wavFile("TestAudio\TestFile.wav")
+    testFileWrite.WriteFile()
+    testFileWrite.PrintFile()
+    print("\n")
