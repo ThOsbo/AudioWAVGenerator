@@ -44,7 +44,6 @@ class wavFile :
         print()
         print("Sub Chunk 2 ID : " + self.subChunk2ID)
         print("Sub Chunk 2 Size : " + str(self.subChunk2Size) + " bytes")
-        print(self.data)
 
     def WriteFile(self) :
         file = open(self.filePath, "wb")
