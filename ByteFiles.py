@@ -45,6 +45,13 @@ class wavFile :
         print("Sub Chunk 2 ID : " + self.subChunk2ID)
         print("Sub Chunk 2 Size : " + str(self.subChunk2Size) + " bytes")
 
+    def ClearAudioData(self) :
+        self.data.clear()
+    
+    def AddToAudioData(self, samplesToAdd) :
+        for sample in samplesToAdd :
+            self.data.append(sample)
+
     def WriteFile(self) :
         file = open(self.filePath, "wb")
         self.__SetChunkSizes()
