@@ -18,12 +18,12 @@ def SawtoothWave(duration, sampleRate, frequency = 44100, amplitude = 32767, off
     #also known as a ramp wave
     numSamples = int(duration * sampleRate)
     waveLength = int(sampleRate / frequency)    #in number of samples
-    gradient = amplitude / waveLength
+    gradient = 2 * amplitude / waveLength
 
     waveList = []
 
     for i in range(numSamples) :
-        val = int(gradient * (i % waveLength)) + offset
+        val = int(gradient * (i % waveLength)) - amplitude
         waveList.append(val)
 
     return waveList   
@@ -32,7 +32,7 @@ def SawtoothWave(duration, sampleRate, frequency = 44100, amplitude = 32767, off
 def TriangleWave(duration, sampleRate, frequency = 44100, amplitude = 32767, offset = 0) :
     numSamples = int(duration * sampleRate)
     waveLength = int(sampleRate / frequency)    #in number of samples
-    gradient = 2 * amplitude / waveLength
+    gradient = 4 * amplitude / waveLength
     sign = 1
     c = 0
 
@@ -44,7 +44,7 @@ def TriangleWave(duration, sampleRate, frequency = 44100, amplitude = 32767, off
             sign = sign * -1
 
         if sign == 1 :
-            c = 0
+            c = -amplitude
         else :
             c = amplitude
         
