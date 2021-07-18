@@ -24,6 +24,10 @@ class Filter() :
     def __GetGain(self, frequency) :
         if (isinstance(self, LowPass)) :
             return self.__LowPassGain(frequency)
+        elif (isinstance(self, HighPass)) :
+            return self.__HighPassGain(frequency)
+        elif (isinstance(self, Notch)) :
+            return self.__NotchGain(frequency)
         else :
             raise NotImplementedError
 
@@ -38,5 +42,43 @@ class Filter() :
 
         return gain
 
+    def __HighPassGain(self, frequency) :
+        gain = 0
+        startPoint = self.cutoffFrequncy - math.asin(0.707)
+
+        if frequency - startPoint > math.pi / 2 :
+            gain = 1
+        elif frequency > startPoint :
+            gain = math.sin(frequency - startPoint)
+
+        return gain
+
+    def __NotchGain(self, frequency) :
+        gain = 1
+
+        if frequency < self.cutoffFrequncy :
+            startPoint = self.cutoffFrequncy - math.acos(0.707)
+
+            if frequency - startPoint > math.pi / 2 :
+                gain = 0
+            elif frequency > startPoint :
+                gain = math.cos(frequency - startPoint)      
+
+        else :
+            startPoint = self.cutoffFrequncy - math.asin(0.707)
+
+            if frequency - startPoint > math.pi / 2 :
+                gain = 1
+            elif frequency > startPoint :
+                gain = math.sin(frequency - startPoint)
+
+        return gain
+
 class LowPass(Filter) :
+    pass
+
+class HighPass(Filter) :
+    pass
+
+class Notch(Filter) :
     pass
