@@ -1,4 +1,19 @@
-def SquareWave(duration, sampleRate, frequency = 44100, amplitude = 32767, offset = 0) :
+import math
+
+def SinWave(duration, sampleRate, frequency, amplitude = 32767) :
+    t0 = 0
+    tN = duration
+    tStep = 1 / sampleRate
+
+    waveList = []
+
+    for i in range(t0, int(tN / tStep)) :
+        t = t0 + (i * tStep)
+        waveList.append(amplitude * math.sin(2 * math.pi * frequency * t))
+
+    return waveList
+
+def SquareWave(duration, sampleRate, frequency, amplitude = 32767) :
     numSamples = int(duration * sampleRate)
     swapSign = int(sampleRate / frequency)      #in number of samples
     sign = 1
@@ -9,12 +24,12 @@ def SquareWave(duration, sampleRate, frequency = 44100, amplitude = 32767, offse
         x = i % (swapSign / 2)
         if (x == 0 and i != 0) :
             sign = sign * -1
-        val = (sign * amplitude) + offset
+        val = (sign * amplitude)
         waveList.append(val)
 
     return waveList
 
-def SawtoothWave(duration, sampleRate, frequency = 44100, amplitude = 32767, offset = 0) :
+def SawtoothWave(duration, sampleRate, frequency, amplitude = 32767) :
     #also known as a ramp wave
     numSamples = int(duration * sampleRate)
     waveLength = int(sampleRate / frequency)    #in number of samples
@@ -29,7 +44,7 @@ def SawtoothWave(duration, sampleRate, frequency = 44100, amplitude = 32767, off
     return waveList   
 
 
-def TriangleWave(duration, sampleRate, frequency = 44100, amplitude = 32767, offset = 0) :
+def TriangleWave(duration, sampleRate, frequency, amplitude = 32767) :
     numSamples = int(duration * sampleRate)
     waveLength = int(sampleRate / frequency)    #in number of samples
     gradient = 4 * amplitude / waveLength
@@ -51,6 +66,5 @@ def TriangleWave(duration, sampleRate, frequency = 44100, amplitude = 32767, off
         val = int(c + (sign * gradient) * x)
 
         waveList.append(val)
-
 
     return waveList 
