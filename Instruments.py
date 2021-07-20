@@ -1,6 +1,7 @@
 import math
 import GenerateWave
 import Filters
+import Envelopes
 
 class Violin :
 
@@ -17,19 +18,26 @@ class Violin :
             self.duration[note] = len(self.wave[note]) / _sampleRate
     
     def GetWave(self, note, _duration) :
+        ampMod = Envelopes.Amplitude(_duration / 4, 0, 0.75, _duration / 4)
+        sampleNum = 0
+
         waveToReturn = []
         numToAdd = _duration // self.duration[note]
 
         for i in range(0, int(numToAdd)) :
             for val in self.wave[note] :
-                waveToReturn.append(val)
+                t = sampleNum / self.sampleRate
+                sampleNum = sampleNum + 1
+                waveToReturn.append(val * ampMod.GetGain(t, _duration))
         
         numLeft = _duration - (numToAdd * self.duration[note])
 
         if (numLeft > 0) :
             extraSamplesToAdd = numLeft * self.sampleRate
             for i in range(0, int(extraSamplesToAdd)) :
-                waveToReturn.append(self.wave[note][i])
+                t = sampleNum / self.sampleRate
+                sampleNum = sampleNum + 1
+                waveToReturn.append(self.wave[note][i] * ampMod.GetGain(t, _duration))
 
         return waveToReturn
 
