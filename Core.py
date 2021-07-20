@@ -1,7 +1,6 @@
 import ByteFiles
 import GenerateWave
 import Instruments
-import Envelopes
 
 def WriteWaveToFile(wave, sampleRate, fileName) :
     file = open(fileName, "w")
