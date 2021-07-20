@@ -28,13 +28,16 @@ class Amplitude :
     def GetGain(self, t, duration, maxAmp = 1) :
         gain = self.sustainLevel
 
+        if self.decayTime == 0 :
+            maxAmp = self.sustainLevel
+
         if (t <= self.attackTime) :
             gain = (maxAmp / 2 * math.sin((math.pi * t / self.attackTime ) - math.pi / 2)) + maxAmp / 2
-        elif (t > self.attackTime and t <= self.attackTime + self.decayTime) :
+        elif (self.attackTime < t and t <= self.attackTime + self.decayTime) :
             gain = ((maxAmp - self.sustainLevel) / 2 * math.cos((math.pi * (t - self.attackTime) / self.decayTime))) + ((maxAmp + self.sustainLevel) / 2)
-        elif (t > duration and t <= duration + self.releaseTime) :
-            gain = ((self.sustainLevel / 2) * math.cos((math.pi * (t - duration) / self.releaseTime))) + (self.sustainLevel / 2)
-        elif (t > duration + self.releaseTime) :
+        elif (duration - self.releaseTime < t) :
+            gain = ((self.sustainLevel / 2) * math.cos((math.pi * (t - (duration - self.releaseTime)) / self.releaseTime))) + (self.sustainLevel / 2)
+        elif (duration < t) :
             gain = 0
 
         return gain
