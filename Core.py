@@ -1,6 +1,7 @@
 import ByteFiles
 import GenerateWave
 import Instruments
+import Music
 
 def WriteWaveToFile(wave, sampleRate, fileName) :
     file = open(fileName, "w")
@@ -13,18 +14,40 @@ def WriteWaveToFile(wave, sampleRate, fileName) :
 
 if __name__ == "__main__" :
 
-    duration = 2
-    frequency = 440
-    testViolin = ByteFiles.wavFile("TestAudio\TestViolinWave.wav")
-    baseWave = GenerateWave.SawtoothWave(duration, testViolin.sampleRate, frequency)
-    WriteWaveToFile(baseWave, testViolin.sampleRate, "PlotWaves\BaseSawtoothWave.txt")
-    tempViolin = Instruments.Violin(testViolin.sampleRate)
-    notes = ["A0", "E1", "A1", "E2", "A2", "E3", "A440", "E4", "A4", "E5", "A5", "E6", "A6"]
-    testViolin.ClearAudioData()
-    for note in notes :
-        tempViolinWave = tempViolin.GetWave(note, duration)
-        WriteWaveToFile(tempViolinWave, testViolin.sampleRate, "PlotWaves\ViolinTest" + note + "Wave.txt")
-        testViolin.AddToAudioData(tempViolinWave)
-    testViolin.WriteFile()
-    testViolin.PrintFile()
+    # duration = 2
+    # frequency = 440
+    # testViolin = ByteFiles.wavFile("TestAudio\TestViolinWave.wav")
+    # baseWave = GenerateWave.SawtoothWave(duration, testViolin.sampleRate, frequency)
+    # WriteWaveToFile(baseWave, testViolin.sampleRate, "PlotWaves\BaseSawtoothWave.txt")
+    # tempViolin = Instruments.Violin(testViolin.sampleRate)
+    # notes = ["A0", "E1", "A1", "E2", "A2", "E3", "A440", "E4", "A4", "E5", "A5", "E6", "A6"]
+    # testViolin.ClearAudioData()
+    # for note in notes :
+    #     tempViolinWave = tempViolin.GetWave(note, duration)
+    #     WriteWaveToFile(tempViolinWave, testViolin.sampleRate, "PlotWaves\ViolinTest" + note + "Wave.txt")
+    #     testViolin.AddToAudioData(tempViolinWave)
+    # testViolin.WriteFile()
+    # testViolin.PrintFile()
+
+    beatsPerMinute = 100
+    testMusicFile = ByteFiles.wavFile("TestAudio\TestMusicScore.wav")
+    MusicSheet = Music.Sheet(beatsPerMinute, testMusicFile.sampleRate)
+    MusicSheet.AddStave("Violin")
+    
+    violinStave = MusicSheet.GetStave("Violin")
+    violinStave.AddNote("A440", 4)
+    violinStave.AddNote("E3", 1)
+    violinStave.AddNote("A2", 1)
+    violinStave.AddNote("E3", 0.5)
+    violinStave.AddNote("A440", 0.5)
+    violinStave.AddNote("E4", 1)
+    violinStave.AddNote("A440", 4)
+
+    musicSheetWave = MusicSheet.GetWave()
+    WriteWaveToFile(musicSheetWave, testMusicFile.sampleRate, "PlotWaves\TestMusicWave.txt")
+
+    testMusicFile.ClearAudioData()
+    testMusicFile.AddToAudioData(musicSheetWave)
+    testMusicFile.WriteFile()
+    testMusicFile.PrintFile()
     
