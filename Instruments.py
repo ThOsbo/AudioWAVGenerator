@@ -18,7 +18,7 @@ class Violin :
             self.duration[note] = len(self.wave[note]) / _sampleRate
     
     def GetWave(self, note, _duration) :
-        ampMod = Envelopes.Amplitude(_duration / 4, 0, 0.75, _duration / 4)
+        ampMod = Envelopes.Amplitude((_duration * 8) / 35, (_duration * 5) / 35, 0.7, (_duration * 10) / 35)
         sampleNum = 0
 
         waveToReturn = []
@@ -48,7 +48,7 @@ class Violin :
         _duration = pow(2, powOf2) / _sampleRate
         baseWave = GenerateWave.SawtoothWave(_duration, _sampleRate, _frequency)
 
-        lowPassFilter = Filters.LowPass(20000, 0.5)
+        lowPassFilter = Filters.LowPass(10000, 0.5)
         filteredWave = lowPassFilter.FilterWave(baseWave, 1 / _sampleRate)
 
         return filteredWave[:int(numSamplesSingleWave)]
