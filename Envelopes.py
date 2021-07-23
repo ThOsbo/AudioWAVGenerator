@@ -2,11 +2,6 @@ import math
 
 class Amplitude :
 
-    attackTime = 0
-    decayTime = 0
-    sustainLevel = 1
-    releaseTime = 0
-
     def __init__(self, _attackTime, _decayTime, _sustainLevel, _releaseTime) :
         self.attackTime = _attackTime
         self.decayTime = _decayTime

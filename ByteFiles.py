@@ -4,27 +4,25 @@ import ParseWAVFileWrite
 
 class wavFile :
 
-    filePath = ""
+    def __init__(self, _filePath) :
+        self.chunkID = "RIFF"
+        self.chunkSize = 36
+        self.chunkFormat = "WAVE"
 
-    chunkID = "RIFF"
-    chunkSize = 36
-    chunkFormat = "WAVE"
+        self.subChunk1ID = "fmt "
+        self.subChunk1Size = 16
+        self.audioFormat = 1
+        self.numChannels = 1
+        self.sampleRate = 44100
+        self.bitsPerSample = 16
+        self.byteRate = int(self.sampleRate * self.numChannels * self.bitsPerSample / 8)
+        self.blockAlign = int(self.numChannels * self.bitsPerSample / 8)
 
-    subChunk1ID = "fmt "
-    subChunk1Size = 16
-    audioFormat = 1
-    numChannels = 1
-    sampleRate = 44100
-    bitsPerSample = 16
-    byteRate = int(sampleRate * numChannels * bitsPerSample / 8)
-    blockAlign = int(numChannels * bitsPerSample / 8)
+        self.subChunk2ID = "data"
+        self.subChunk2Size = 0
+        self.data = []
 
-    subChunk2ID = "data"
-    subChunk2Size = 0
-    data = []
-
-    def __init__(self, filePath) :
-        self.filePath = filePath
+        self.filePath = _filePath
         if os.path.isfile(self.filePath) :
             self.__ReadFile()
 

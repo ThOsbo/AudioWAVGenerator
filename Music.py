@@ -1,19 +1,15 @@
 import Instruments
 
 class Sheet :
-    sampleRate = 0
-    beatsPerMinute = 0
-    staves = {}
-
     def __init__(self, _beatsPerMinute, _sampleRate) :
         self.sampleRate = _sampleRate
         self.beatsPerMinute = _beatsPerMinute
+        self.staves = {}
 
     def AddStave(self, instrument, staveName = None) :
-        newStave = Stave(instrument, self.beatsPerMinute, self.sampleRate)
         if staveName == None :
             staveName = str(instrument)
-        self.staves[staveName] = newStave
+        self.staves[staveName] = Stave(instrument, self.beatsPerMinute, self.sampleRate)
 
     def GetStave(self, staveName) :
         return self.staves[staveName]
@@ -41,12 +37,8 @@ class Sheet :
         return waveToReturn
 
 class Stave :
-    instrument = None
-    music = []
-    sampleRate = 0
-    beatsPerMinute = 0
-
     def __init__(self, _instrument, _beatsPerMinute, _sampleRate) :
+        self.music = []
         self.sampleRate = _sampleRate
         self.beatsPerMinute = _beatsPerMinute
         if str(_instrument).lower() == "violin" :
@@ -62,7 +54,7 @@ class Stave :
     def AddBreak(self, beats) :
         duration = (beats / self.beatsPerMinute) * 60   #in seconds
         tStep = 1 / self.sampleRate
-        for t in range(0, duration / tStep) :
+        for t in range(0, int(duration / tStep)) :
             self.music.append(0)
 
     def RepeatStave(self) :

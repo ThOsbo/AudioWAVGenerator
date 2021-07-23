@@ -3,9 +3,6 @@ import FastFourierTransform
 
 class Filter() :
 
-    cutoffFrequncy = 0
-    resonance = 0
-
     def __init__(self, _cutoffFrequency, _resonance) :
         self.cutoffFrequncy = _cutoffFrequency
         self.resonance = _resonance
