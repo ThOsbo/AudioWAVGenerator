@@ -29,12 +29,35 @@ if __name__ == "__main__" :
     # testViolin.WriteFile()
     # testViolin.PrintFile()
 
-    beatsPerMinute = 100
-    testMusicFile = ByteFiles.wavFile("TestAudio\TestMusicScore.wav")
-    MusicSheet = Music.Sheet(beatsPerMinute, testMusicFile.sampleRate)
-    MusicSheet.AddStave("Violin")
+    # beatsPerMinute = 100
+    # testMusicFile = ByteFiles.wavFile("TestAudio\TestMusicScore.wav")
+    # MusicSheet = Music.Sheet(beatsPerMinute, testMusicFile.sampleRate)
+    # MusicSheet.AddStave("Violin")
     
-    violinStave = MusicSheet.GetStave("Violin")
+    # violinStave = MusicSheet.GetStave("Violin")
+    # violinStave.AddNote("A440", 4)
+    # violinStave.AddNote("E3", 1)
+    # violinStave.AddNote("A2", 1)
+    # violinStave.AddNote("E3", 0.5)
+    # violinStave.AddNote("A440", 0.5)
+    # violinStave.AddNote("E4", 1)
+    # violinStave.AddNote("A440", 4)
+
+    # musicSheetWave = MusicSheet.GetWave()
+    # WriteWaveToFile(musicSheetWave, testMusicFile.sampleRate, "PlotWaves\TestMusicWave.txt")
+
+    # testMusicFile.ClearAudioData()
+    # testMusicFile.AddToAudioData(musicSheetWave)
+    # testMusicFile.WriteFile()
+    # testMusicFile.PrintFile()
+
+    beatsPerMinute = 100
+    testMusicFile = ByteFiles.wavFile("TestAudio\TestMusicDuetScore.wav")
+    MusicSheet = Music.Sheet(beatsPerMinute, testMusicFile.sampleRate)
+    MusicSheet.AddStave("Violin", "Violin1")
+    MusicSheet.AddStave("Violin", "Violin2")
+    
+    violinStave = MusicSheet.GetStave("Violin1")
     violinStave.AddNote("A440", 4)
     violinStave.AddNote("E3", 1)
     violinStave.AddNote("A2", 1)
@@ -43,8 +66,18 @@ if __name__ == "__main__" :
     violinStave.AddNote("E4", 1)
     violinStave.AddNote("A440", 4)
 
+    violinStave2 = MusicSheet.GetStave("Violin2")
+    violinStave2.AddBreak(4)
+    violinStave2.AddNote("A440", 4)
+    violinStave2.AddNote("E3", 1)
+    violinStave2.AddNote("A2", 1)
+    violinStave2.AddNote("E3", 0.5)
+    violinStave2.AddNote("A440", 0.5)
+    violinStave2.AddNote("E4", 1)
+    violinStave2.AddNote("A440", 4)
+
     musicSheetWave = MusicSheet.GetWave()
-    WriteWaveToFile(musicSheetWave, testMusicFile.sampleRate, "PlotWaves\TestMusicWave.txt")
+    WriteWaveToFile(musicSheetWave, testMusicFile.sampleRate, "PlotWaves\TestMusicDuetWave.txt")
 
     testMusicFile.ClearAudioData()
     testMusicFile.AddToAudioData(musicSheetWave)
