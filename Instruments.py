@@ -12,9 +12,10 @@ class Violin :
     def __init__(self, _sampleRate) :
         self.sampleRate = _sampleRate
         for note in self.frequency :
-            for val in self.__GenerateWave(self.frequency[note], _sampleRate) :
-                self.wave[note].append(val)
-            self.duration[note] = len(self.wave[note]) / _sampleRate
+            if len(self.wave[note]) == 0 or self.duration[note] == 0 :
+                for val in self.__GenerateWave(self.frequency[note], _sampleRate) :
+                    self.wave[note].append(val)
+                self.duration[note] = len(self.wave[note]) / _sampleRate
     
     def GetWave(self, note, _duration) :
         ampMod = Envelopes.Amplitude((_duration * 8) / 35, (_duration * 5) / 35, 0.7, (_duration * 10) / 35)
