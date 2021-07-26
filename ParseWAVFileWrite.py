@@ -25,8 +25,20 @@ def WriteDataChunk(subChunk2ID, subChunk2Size, data, bitsPerSample) :
     bytesToWrite.append(struct.pack("<I", int(subChunk2Size)))
     for val in data :
         if bitsPerSample == 8 :
-            byte = bytes([int(val)])
+            if (val > 255) :
+                toPack = 255
+            elif (val < 0) :
+                toPack = 0
+            else :
+                toPack = val
+            byte = bytes([int(toPack)])
         elif bitsPerSample == 16 :
-            byte = struct.pack("<h", int(val))
+            if (val > 32767) :
+                toPack = 32767
+            elif (val < -32767) :
+                toPack = -32767
+            else :
+                toPack = val
+            byte = struct.pack("<h", int(toPack))
         bytesToWrite.append(byte)
     return bytesToWrite
