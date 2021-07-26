@@ -7,6 +7,6 @@ A set of python code designed to synthesise instruments and then create audio .w
 - Amplitude envolpe modulator with attack, decay and release times and sustain level
 
 ## Music
-- Currently contains a synthesis violin (as close as I could get)
+- Currently contains a synthesis violin and drum (as close as I could get)
 - Strings notes together lasting different beat lengths to make a musical piece
 - Can add multiple instruments to play in tandem

@@ -52,4 +52,49 @@ class Violin :
         filteredWave = lowPassFilter.FilterWave(baseWave, 1 / _sampleRate)
 
         return filteredWave[:int(numSamplesSingleWave)]
+
+class Drum :
+    wave = {"A1" : [], "C2" : [], "D2" : [], "F2" : [], "G2" : [], "B3" : [], "E3" : []}
+    duration = {"A1" : 0, "C2" : 0, "D2" : 0, "F2" : 0, "G2" : 0, "B3" : 0, "E3" : 0}
+    frequency = {"A1" : 55, "C2" : 65, "D2" : 75, "F2" : 85, "G2" : 100, "B3" : 120, "E3" : 165}
     
+    def __init__(self, _sampleRate) :
+        self.sampleRate = _sampleRate
+        for note in self.frequency :
+            if len(self.wave[note]) == 0 or self.duration[note] == 0 :
+                for val in self.__GenerateWave(self.frequency[note], _sampleRate) :
+                    self.wave[note].append(val)
+                self.duration[note] = len(self.wave[note]) / _sampleRate
+    
+    def GetWave(self, note, _duration) :
+        ampMod = Envelopes.Amplitude(0.005, 0.5, 0, 0)
+        sampleNum = 0
+
+        waveToReturn = []
+        numToAdd = _duration // self.duration[note]
+
+        for i in range(0, int(numToAdd)) :
+            for val in self.wave[note] :
+                t = sampleNum / self.sampleRate
+                sampleNum = sampleNum + 1
+                waveToReturn.append(val * ampMod.GetGain(t, _duration))
+        
+        numLeft = _duration - (numToAdd * self.duration[note])
+
+        if (numLeft > 0) :
+            extraSamplesToAdd = numLeft * self.sampleRate
+            for i in range(0, int(extraSamplesToAdd)) :
+                t = sampleNum / self.sampleRate
+                sampleNum = sampleNum + 1
+                waveToReturn.append(self.wave[note][i] * ampMod.GetGain(t, _duration))
+
+        return waveToReturn
+
+    def __GenerateWave(self, _frequency, _sampleRate) :
+        numSamplesSingleWave = _sampleRate // _frequency
+        powOf2 = math.ceil(math.log(numSamplesSingleWave, 2))
+
+        _duration = pow(2, powOf2) / _sampleRate
+        baseWave = GenerateWave.SinWave(_duration, _sampleRate, _frequency)
+
+        return baseWave[:int(numSamplesSingleWave)]
