@@ -1,4 +1,17 @@
 import math
+import random
+
+def Noise(duration, sampleRate, amplitude = 32767) :
+    t0 = 0
+    tN = duration
+    tStep = 1 / sampleRate
+
+    waveList = []
+
+    for i in range(t0, int(tN / tStep)) :
+        waveList.append(random.randint(int(-amplitude), int(amplitude)))
+
+    return waveList
 
 def SinWave(duration, sampleRate, frequency, amplitude = 32767) :
     t0 = 0
