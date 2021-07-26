@@ -24,7 +24,10 @@ class wavFile :
 
         self.filePath = _filePath
         if os.path.isfile(self.filePath) :
-            self.__ReadFile()
+            try :
+                self.__ReadFile()
+            except :
+                pass
 
     def PrintFile(self) :
         print("Chunk ID : " + self.chunkID)
@@ -51,13 +54,16 @@ class wavFile :
             self.data.append(sample)
 
     def WriteFile(self) :
-        file = open(self.filePath, "wb")
         self.__SetChunkSizes()
-        for byte in ParseWAVFileWrite.WriteRIFFChunk(self.chunkID, self.chunkSize, self.chunkFormat) :
+        RIFFChunkBytes = ParseWAVFileWrite.WriteRIFFChunk(self.chunkID, self.chunkSize, self.chunkFormat)
+        FmtChunkBytes = ParseWAVFileWrite.WriteFmtChunk(self.subChunk1ID, self.subChunk1Size, self.audioFormat, self.numChannels, self.sampleRate, self.byteRate, self.blockAlign, self.bitsPerSample)
+        dataChunkBytes = ParseWAVFileWrite.WriteDataChunk(self.subChunk2ID, self.subChunk2Size, self.data, self.bitsPerSample)        
+        file = open(self.filePath, "wb")
+        for byte in RIFFChunkBytes :
             file.write(byte)
-        for byte in ParseWAVFileWrite.WriteFmtChunk(self.subChunk1ID, self.subChunk1Size, self.audioFormat, self.numChannels, self.sampleRate, self.byteRate, self.blockAlign, self.bitsPerSample) :
+        for byte in FmtChunkBytes :
             file.write(byte)
-        for byte in ParseWAVFileWrite.WriteDataChunk(self.subChunk2ID, self.subChunk2Size, self.data, self.bitsPerSample) :
+        for byte in dataChunkBytes :
             file.write(byte)
         file.close()
 
