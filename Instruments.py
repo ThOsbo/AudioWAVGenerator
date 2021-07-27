@@ -56,7 +56,7 @@ class Violin :
 class Drum :
     wave = {"A1" : [], "C2" : [], "D2" : [], "F2" : [], "G2" : [], "B3" : [], "E3" : []}
     duration = {"A1" : 0, "C2" : 0, "D2" : 0, "F2" : 0, "G2" : 0, "B3" : 0, "E3" : 0}
-    frequency = {"A1" : 55, "C2" : 65, "D2" : 75, "F2" : 85, "G2" : 100, "B3" : 120, "E3" : 165}
+    frequency = {"A1" : (55, 75), "C2" : (65, 95), "D2" : (75, 110), "F2" : (85, 125), "G2" : (100, 145), "B3" : (120, 175), "E3" : (165, 235)}
     
     def __init__(self, _sampleRate) :
         self.sampleRate = _sampleRate
@@ -91,10 +91,27 @@ class Drum :
         return waveToReturn
 
     def __GenerateWave(self, _frequency, _sampleRate) :
-        numSamplesSingleWave = _sampleRate // _frequency
+        numSamplesSingleWave = _sampleRate
         powOf2 = math.ceil(math.log(numSamplesSingleWave, 2))
 
         _duration = pow(2, powOf2) / _sampleRate
-        baseWave = GenerateWave.SinWave(_duration, _sampleRate, _frequency)
+        baseWave = GenerateWave.Noise(_duration, _sampleRate)
 
-        return baseWave[:int(numSamplesSingleWave)]
+        lowFilter = Filters.LowPass(_frequency[1], 0)
+        highFilter = Filters.HighPass(_frequency[0], 0)
+
+        filterWave1 = lowFilter.FilterWave(baseWave, 1 / _sampleRate)
+        filterWave2 = highFilter.FilterWave(filterWave1, 1 / _sampleRate)
+
+        highestAbsVal = 0
+        for sample in filterWave2 :
+            if abs(sample) > highestAbsVal :
+                highestAbsVal = abs(sample)
+        
+        gain =  32767 / highestAbsVal
+
+        waveToReturn = []
+        for sample in filterWave2 :
+            waveToReturn.append(gain * sample)
+
+        return waveToReturn[:int(numSamplesSingleWave)]
