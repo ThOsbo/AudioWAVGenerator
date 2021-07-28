@@ -96,7 +96,7 @@ def ParseFMTSubChunk(bytesList) :
 
     return subChunk1ID, subChunk1Size, audioFormat, numChannels, sampleRate, byteRate, blockAlign, bitsPerSample
 
-def ParseDataSubChunk(bytesList, bitsPerSample) :
+def ParseDataSubChunk(bytesList, bytesPerSample) :
     subChunk2ID = ""
     subChunk2Size = None
     data = []
@@ -104,9 +104,6 @@ def ParseDataSubChunk(bytesList, bitsPerSample) :
 
     const_subChunk2IDEndPoint = 4
     const_subChunk2SizeEndPoint = 8
-    const_bitsPerByte = 8
-
-    const_bytesPerSample = bitsPerSample / const_bitsPerByte
 
     pos = 0
     for byte in bytesList :
@@ -122,7 +119,7 @@ def ParseDataSubChunk(bytesList, bitsPerSample) :
                 dataSample = byte
             else : 
                 dataSample = dataSample + byte
-            if (len(dataSample) == const_bytesPerSample) :
+            if (len(dataSample) == bytesPerSample) :
                 data.append(__ParseSample(dataSample))
                 dataSample = None
             
@@ -139,6 +136,8 @@ def __ParseSample(sample) :
         result = ord(sample)
     elif sampleSize == 2 :
         result = struct.unpack_from("<h", sample)[0]
+    elif sampleSize == 4 :
+        result = struct.unpack_from("<f", sample)[0]
     return result
         
     

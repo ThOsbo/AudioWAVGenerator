@@ -19,12 +19,16 @@ def WriteFmtChunk(subChunk1ID, subChunk1Size, audioFormat, numChannels, sampleRa
     bytesToWrite.append(struct.pack("<H", int(bitsPerSample)))
     return bytesToWrite
 
-def WriteDataChunk(subChunk2ID, subChunk2Size, data, bitsPerSample) :
+def WriteDataChunk(subChunk2ID, subChunk2Size, data, bytesPerSample) :
     bytesToWrite = []
     bytesToWrite.append(subChunk2ID.encode("utf-8"))
     bytesToWrite.append(struct.pack("<I", int(subChunk2Size)))
+
+    const_h_max = struct.unpack_from("<h", b'\xff\x7f')[0]  #largest little endian short number
+    const_f_max = struct.unpack_from("<f", b'\xff\xff\x7f\x7f')[0]  #largest little endian float number
+
     for val in data :
-        if bitsPerSample == 8 :
+        if bytesPerSample == 1 :
             if (val > 255) :
                 toPack = 255
             elif (val < 0) :
@@ -32,13 +36,22 @@ def WriteDataChunk(subChunk2ID, subChunk2Size, data, bitsPerSample) :
             else :
                 toPack = val
             byte = bytes([int(toPack)])
-        elif bitsPerSample == 16 :
-            if (val > 32767) :
-                toPack = 32767
-            elif (val < -32767) :
-                toPack = -32767
+        elif bytesPerSample == 2 :
+            if (val > const_h_max) :
+                toPack = const_h_max
+            elif (val < -1 * const_h_max) :
+                toPack = -1 * const_h_max
             else :
                 toPack = val
             byte = struct.pack("<h", int(toPack))
+        elif bytesPerSample == 4 :
+            if (val > const_f_max) :
+                toPack = const_f_max
+            elif (val < -1 * const_f_max) :
+                toPack = -1 * const_f_max
+            else :
+                toPack = val
+            toPack = val
+            byte = struct.pack("<f", int(toPack))
         bytesToWrite.append(byte)
     return bytesToWrite
