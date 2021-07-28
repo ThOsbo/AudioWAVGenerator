@@ -46,6 +46,20 @@ class wavFile :
         print("Sub Chunk 2 ID : " + self.subChunk2ID)
         print("Sub Chunk 2 Size : " + str(self.subChunk2Size) + " bytes")
 
+    def SetNumChannels(self, _numChannels) :
+        self.numChannels = int(_numChannels)
+        self.blockAlign = int(self.numChannels * self.bitsPerSample / 8)
+        self.byteRate = int(self.sampleRate * self.blockAlign)
+
+    def SetSampleRate(self, _sampleRate) :
+        self.sampleRate = int(_sampleRate)
+        self.byteRate = int(self.sampleRate * self.blockAlign)
+
+    def SetBitsPerSample(self, _bitsPerSample) :
+        self.bitsPerSample = int(8 * (_bitsPerSample // 8))
+        self.blockAlign = int(self.numChannels * self.bitsPerSample / 8)
+        self.byteRate = int(self.sampleRate * self.blockAlign)
+
     def ClearAudioData(self) :
         self.data.clear()
     
@@ -57,7 +71,7 @@ class wavFile :
         self.__SetChunkSizes()
         RIFFChunkBytes = ParseWAVFileWrite.WriteRIFFChunk(self.chunkID, self.chunkSize, self.chunkFormat)
         FmtChunkBytes = ParseWAVFileWrite.WriteFmtChunk(self.subChunk1ID, self.subChunk1Size, self.audioFormat, self.numChannels, self.sampleRate, self.byteRate, self.blockAlign, self.bitsPerSample)
-        dataChunkBytes = ParseWAVFileWrite.WriteDataChunk(self.subChunk2ID, self.subChunk2Size, self.data, self.bitsPerSample)        
+        dataChunkBytes = ParseWAVFileWrite.WriteDataChunk(self.subChunk2ID, self.subChunk2Size, self.data, int(self.blockAlign / self.numChannels))        
         file = open(self.filePath, "wb")
         for byte in RIFFChunkBytes :
             file.write(byte)
@@ -77,7 +91,7 @@ class wavFile :
 
         self.chunkID, self.chunkSize, self.chunkFormat = ParseWAVFileRead.ParseRIFFChunk(RIFFChunkBytes)
         self.subChunk1ID, self.subChunk1Size, self.audioFormat, self.numChannels, self.sampleRate, self.byteRate, self.blockAlign, self.bitsPerSample = ParseWAVFileRead.ParseFMTSubChunk(fmtChunkBytes)
-        self.subChunk2ID, self.subChunk2Size, self.data = ParseWAVFileRead.ParseDataSubChunk(dataChunkBytes, self.bitsPerSample)
+        self.subChunk2ID, self.subChunk2Size, self.data = ParseWAVFileRead.ParseDataSubChunk(dataChunkBytes, int(self.blockAlign / self.numChannels))
 
     def __SplitFileChunks(self) :
 
