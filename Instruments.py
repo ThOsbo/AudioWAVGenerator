@@ -18,7 +18,7 @@ class Violin :
                 self.duration[note] = len(self.wave[note]) / _sampleRate
     
     def GetWave(self, note, _duration) :
-        ampMod = Envelopes.Amplitude((_duration * 8) / 35, (_duration * 5) / 35, 0.7, (_duration * 10) / 35)
+        ampMod = Envelopes.Amplitude((_duration * 8) / 35, (_duration * 5) / 35, 0.5, (_duration * 10) / 35)
         sampleNum = 0
 
         waveToReturn = []
@@ -28,7 +28,7 @@ class Violin :
             for val in self.wave[note] :
                 t = sampleNum / self.sampleRate
                 sampleNum = sampleNum + 1
-                waveToReturn.append(val * ampMod.GetGain(t, _duration))
+                waveToReturn.append(val * ampMod.GetGain(t, _duration, 0.7))
         
         numLeft = _duration - (numToAdd * self.duration[note])
 
@@ -37,7 +37,7 @@ class Violin :
             for i in range(0, int(extraSamplesToAdd)) :
                 t = sampleNum / self.sampleRate
                 sampleNum = sampleNum + 1
-                waveToReturn.append(self.wave[note][i] * ampMod.GetGain(t, _duration))
+                waveToReturn.append(self.wave[note][i] * ampMod.GetGain(t, _duration, 0.7))
 
         return waveToReturn
 
@@ -67,7 +67,7 @@ class Drum :
                 self.duration[note] = len(self.wave[note]) / _sampleRate
     
     def GetWave(self, note, _duration) :
-        ampMod = Envelopes.Amplitude(0.005, 0.5, 0, 0)
+        ampMod = Envelopes.Amplitude(0.005, _duration - 0.005, 0, 0)
         sampleNum = 0
 
         waveToReturn = []
@@ -88,6 +88,15 @@ class Drum :
                 sampleNum = sampleNum + 1
                 waveToReturn.append(self.wave[note][i] * ampMod.GetGain(t, _duration))
 
+        highestAbsVal = 0
+        for sample in waveToReturn :
+            if abs(sample) > highestAbsVal :
+                highestAbsVal = abs(sample)
+        
+        gain = 32767 / highestAbsVal
+        for i in range(0, len(waveToReturn)) :
+            waveToReturn[i] = gain * waveToReturn[i]
+
         return waveToReturn
 
     def __GenerateWave(self, _frequency, _sampleRate) :
@@ -95,7 +104,13 @@ class Drum :
         powOf2 = math.ceil(math.log(numSamplesSingleWave, 2))
 
         _duration = pow(2, powOf2) / _sampleRate
-        baseWave = GenerateWave.Noise(_duration, _sampleRate)
+        baseNoise = GenerateWave.Noise(_duration, _sampleRate)
+        baseSin = GenerateWave.SinWave(_duration, _sampleRate, (_frequency[0] + _frequency[1]) / 2)
+
+        baseWave = []
+
+        for i in range(0, len(baseNoise)) :
+            baseWave.append((baseNoise[i] + baseSin[i]))
 
         lowFilter = Filters.LowPass(_frequency[1], 0)
         highFilter = Filters.HighPass(_frequency[0], 0)
@@ -104,14 +119,17 @@ class Drum :
         filterWave2 = highFilter.FilterWave(filterWave1, 1 / _sampleRate)
 
         highestAbsVal = 0
+        total = 0
         for sample in filterWave2 :
+            total = total + sample
             if abs(sample) > highestAbsVal :
                 highestAbsVal = abs(sample)
         
-        gain =  32767 / highestAbsVal
+        average = total / len(filterWave2)
+        gain =  32767 / (highestAbsVal + average)
 
         waveToReturn = []
         for sample in filterWave2 :
-            waveToReturn.append(gain * sample)
+            waveToReturn.append(gain * (sample + average))
 
         return waveToReturn[:int(numSamplesSingleWave)]
