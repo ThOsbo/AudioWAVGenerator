@@ -6,10 +6,10 @@ class Sheet :
         self.beatsPerMinute = _beatsPerMinute
         self.staves = {}
 
-    def AddStave(self, instrument, staveName = None) :
+    def AddStave(self, instrument, staveName = None, numInstruments = 1) :
         if staveName == None :
             staveName = str(instrument)
-        self.staves[staveName] = Stave(instrument, self.beatsPerMinute, self.sampleRate)
+        self.staves[staveName] = Stave(instrument, self.beatsPerMinute, self.sampleRate, numInstruments)
 
     def GetStave(self, staveName) :
         return self.staves[staveName]
@@ -20,14 +20,15 @@ class Sheet :
 
         for stave in self.staves.values() :
             staveMusic = stave.GetMusic()
-            for sampleNum in range(0, len(staveMusic)) :
-                if sampleNum >= len(waveToReturn) :
-                    waveToReturn.append(staveMusic[sampleNum])
-                else :
-                    waveToReturn[sampleNum] = waveToReturn[sampleNum] + staveMusic[sampleNum]
+            for instrumentNum in range(0, stave.numInstruments) :
+                for sampleNum in range(0, len(staveMusic)) :
+                    if sampleNum >= len(waveToReturn) :
+                        waveToReturn.append(staveMusic[sampleNum])
+                    else :
+                        waveToReturn[sampleNum] = waveToReturn[sampleNum] + staveMusic[sampleNum]
 
-                if abs(waveToReturn[sampleNum]) > highestAmp :
-                    highestAmp = abs(waveToReturn[sampleNum])
+                    if abs(waveToReturn[sampleNum]) > highestAmp :
+                        highestAmp = abs(waveToReturn[sampleNum])
         
         if highestAmp > maxAmplitude :
             condenseFactor = maxAmplitude / highestAmp
@@ -37,12 +38,15 @@ class Sheet :
         return waveToReturn
 
 class Stave :
-    def __init__(self, _instrument, _beatsPerMinute, _sampleRate) :
+    def __init__(self, _instrument, _beatsPerMinute, _sampleRate, _numInstruments = 1) :
         self.music = []
         self.sampleRate = _sampleRate
         self.beatsPerMinute = _beatsPerMinute
+        self.numInstruments = _numInstruments
         if str(_instrument).lower() == "violin" :
             self.instrument = Instruments.Violin(_sampleRate)
+        elif str(_instrument).lower() == "drum" :
+            self.instrument = Instruments.Drum(_sampleRate)
         else :
             raise NotImplementedError
 
