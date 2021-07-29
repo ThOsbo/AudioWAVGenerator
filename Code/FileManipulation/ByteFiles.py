@@ -1,6 +1,6 @@
 import os
-import ParseWAVFileRead
-import ParseWAVFileWrite
+import FileManipulation.ParseWAVFileRead as ParseWAVFileRead
+import FileManipulation.ParseWAVFileWrite as ParseWAVFileWrite
 
 class wavFile :
 

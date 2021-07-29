@@ -1,7 +1,7 @@
-import ByteFiles
-import GenerateWave
-import Instruments
-import Music
+import FileManipulation.ByteFiles as ByteFiles
+import Synthesis.GenerateWave as GenerateWave
+import Synthesis.Instruments as Instruments
+import Music.Music as Music
 import struct
 
 def WriteWaveToFile(wave, sampleRate, fileName) :

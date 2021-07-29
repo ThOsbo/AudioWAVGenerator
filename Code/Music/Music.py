@@ -1,4 +1,4 @@
-import Instruments
+import Synthesis.Instruments as Instruments
 
 class Sheet :
     def __init__(self, _beatsPerMinute, _sampleRate) :

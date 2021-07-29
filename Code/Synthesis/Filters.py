@@ -1,5 +1,5 @@
 import math
-import FastFourierTransform
+import Synthesis.FastFourierTransform as FastFourierTransform
 
 class Filter() :
 

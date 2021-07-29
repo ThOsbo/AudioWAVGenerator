@@ -1,7 +1,7 @@
 import math
-import GenerateWave
-import Filters
-import Envelopes
+import Synthesis.GenerateWave as GenerateWave
+import Synthesis.Filters as Filters
+import Synthesis.Envelopes as Envelopes
 
 class Violin :
 
